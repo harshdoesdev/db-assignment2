@@ -14,14 +14,33 @@ function App() {
 
   const [value, setValue] = useState('');
 
+  const handleChange = country => {
+    setState(state => {
+      if(country === 'world wide') { 
+        // handle worldwide
+        const checked = state[country];
+        
+        return Object.keys(state).reduce((newState, _country) => {
+          newState[_country] = !checked;
+
+          return newState;
+        }, {});
+      } else {
+        // handle specific country
+        return { ...state, [country]: !state[country] }
+      }
+    })
+  };
+
   const handleForm = e => {
     e.preventDefault();
 
-    if(state[value] == null) {
+    // check if country exists in state and is not already selected
+    if(state[value] == null || !!state[value]) {
       return;
     }
 
-    setState(state => ({ ...state, [value]: true }));
+    handleChange(value);
   };
   
   return (
@@ -53,7 +72,7 @@ function App() {
                     checked={state[country]} 
                     type="checkbox" 
                     name="country[]" 
-                    onChange={() => setState(state => ({ ...state, [country]: !state[country] }))} 
+                    onChange={() => handleChange(country)} 
                   />
                   {country}
                 </label>
